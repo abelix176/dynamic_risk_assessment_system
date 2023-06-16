@@ -28,7 +28,7 @@ def model_predictions(dataset):
 
     # Perform predictions
     y_pred = model.predict(X_test)
-    return y_pred.to_list()
+    return y_pred.tolist()
 
 ##################Function to get summary statistics
 def dataframe_summary():
@@ -103,7 +103,9 @@ def outdated_packages_list():
 
 
 if __name__ == '__main__':
-    model_predictions()
+    X_test = pd.read_csv(os.path.join(test_data_path, 'testdata.csv'))
+    X_test.drop(['corporation', 'exited'], inplace=True, axis=1)
+    model_predictions(X_test)
     dataframe_summary()
     execution_time()
     outdated_packages_list()
