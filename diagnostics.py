@@ -104,7 +104,6 @@ def outdated_packages_list():
 
 if __name__ == '__main__':
     X_test = pd.read_csv(os.path.join(test_data_path, 'testdata.csv'))
-    X_test.drop(['corporation', 'exited'], inplace=True, axis=1)
     model_predictions(X_test)
     dataframe_summary()
     execution_time()
