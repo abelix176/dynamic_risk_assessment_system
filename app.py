@@ -31,7 +31,7 @@ def predict():
 
 #######################Scoring Endpoint
 @app.route("/scoring", methods=['GET','OPTIONS'])
-def stats():        
+def stats_score():        
     score_model()
     score_file_path = os.path.join(output_model_path, 'latestscore.txt')
     with open(score_file_path, 'r') as f:
@@ -40,13 +40,13 @@ def stats():
 
 #######################Summary Statistics Endpoint
 @app.route("/summarystats", methods=['GET','OPTIONS'])
-def stats():        
+def stats_summary():        
     summary_stats = dataframe_summary()
     return jsonify(summary_stats)
 
 #######################Diagnostics Endpoint
 @app.route("/diagnostics", methods=['GET','OPTIONS'])
-def stats():        
+def stats_diagnostics():        
     timings = execution_time()
     missing_data = check_missing_data()
     module_versions = outdated_packages_list()
