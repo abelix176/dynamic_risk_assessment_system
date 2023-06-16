@@ -100,6 +100,7 @@ def outdated_packages_list():
     
     for module in module_info:
        print('{:<20s}{:<20s}{:<20s}'.format(module[0], module[1], module[2]))
+    return module_info
 
 
 if __name__ == '__main__':
