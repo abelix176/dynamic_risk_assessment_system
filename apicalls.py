@@ -7,7 +7,7 @@ with open('config.json', 'r') as f:
 output_model_path = os.path.join(config['output_model_path'])
 
 #Specify a URL that resolves to your workspace
-URL = "http://127.0.0.1/:8000"
+URL = "http://127.0.0.1:8000"
 
 
 # API endpoints
@@ -17,23 +17,31 @@ summarystats_endpoint = URL + f'/summarystats'
 diagnostics_endpoint = URL + f'/diagnostics'
 
 # Call prediction endpoint
-file_path = '/testdata/testdata.csv'
-response = requests.post(prediction_endpoint, data={'file_path': file_path})
-predictions = response.json()
+file_path = 'testdata/testdata.csv'
+response1 = requests.post(prediction_endpoint, data={'file_path': file_path})
 
 # Call scoring endpoint
-response = requests.get(scoring_endpoint)
-score = response.text
+response2 = requests.get(scoring_endpoint)
 
 # Call summary statistics endpoint
-response = requests.get(summarystats_endpoint)
-summary_stats = response.json()
+response3 = requests.get(summarystats_endpoint)
 
 # Call diagnostics endpoint
-response = requests.get(diagnostics_endpoint)
-diagnostics_output = response.json()
+response4 = requests.get(diagnostics_endpoint)
+
+responses = [response1, response2, response3, response4]
+for response in responses:
+    try:
+        assert response.status_code == 200
+    except AssertionError as e:
+        print(f"Status code error: {response.status_code} != 200")
+        raise e
 
 # Combine outputs
+predictions = response1.json()
+score = response2.text
+summary_stats = response3.json()
+diagnostics_output = response4.json()
 api_outputs = {
     'predictions': predictions,
     'score': score,
@@ -44,7 +52,7 @@ api_outputs = {
 # Write combined outputs to file
 output_file_path = os.path.join(output_model_path, 'apireturns.txt')
 with open(output_file_path, 'w') as f:
-    json.dump(api_outputs, f)
+    json.dump(api_outputs, f, indent=4)
 
 
 
