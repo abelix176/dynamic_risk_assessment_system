@@ -1,12 +1,14 @@
 import json
 import os
 import subprocess
+from scoring import get_f1_score
 
 
 ##################Check and read new data
 config_path = 'config.json'
 with open(config_path, 'r') as f:
     config = json.load(f)
+output_folder_path = os.path.join(config['output_folder_path'])
 
 # Step 2: Check for New Data
 deployment_path = config['prod_deployment_path']
@@ -41,18 +43,14 @@ if not new_data_files:
 #check whether the score from the deployed model is different from the score from the model that uses the newest ingested data
 latest_score_path = os.path.join(deployment_path, 'latestscore.txt')
 trained_model_path = os.path.join(deployment_path, 'trainedmodel.pkl')
+new_data_path = os.path.join(output_folder_path, 'finaldata.csv')
 
 if os.path.exists(latest_score_path) and os.path.exists(trained_model_path):
     # Read the score from the latest model
     with open(latest_score_path, 'r') as f:
         latest_score = float(f.read())
-
-    # Make predictions using the trained model
-    subprocess.run(['python', 'scoring.py'])
-
     # Get the score for the new predictions
-    with open('score.txt', 'r') as f:
-        new_score = float(f.read())
+    new_score = get_f1_score(trained_model_path, new_data_path)
 
     # Compare the scores
     if new_score >= latest_score:
@@ -61,16 +59,15 @@ if os.path.exists(latest_score_path) and os.path.exists(trained_model_path):
 else:
     print("No previous model found. Proceeding with re-training.")
 
-##################Deciding whether to proceed, part 2
-#if you found model drift, you should proceed. otherwise, do end the process here
-
-
 
 ##################Re-deployment
-#if you found evidence for model drift, re-run the deployment.py script
+subprocess.run(['python', 'training.py'])
+subprocess.run(['python', 'scoring.py'])
+subprocess.run(['python', 'deployment.py'])
 
 ##################Diagnostics and reporting
-#run diagnostics.py and reporting.py for the re-deployed model
+subprocess.run(['python', 'apicalls.py'])
+subprocess.run(['python', 'reporting.py'])
 
 
 

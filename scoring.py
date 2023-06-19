@@ -16,14 +16,14 @@ with open('config.json','r') as f:
 
 dataset_csv_path = os.path.join(config['output_folder_path']) 
 test_data_path = os.path.join(config['test_data_path'])
-model_path = os.path.join(config['output_model_path'])
+model_folder = os.path.join(config['output_model_path'])
 
 def get_f1_score(model_path, test_data_path):
     # Read test data
     test_data = pd.read_csv(test_data_path)
 
     # Load trained model
-    with open(os.path.join(model_path, 'trainedmodel.pkl'), 'rb') as f:
+    with open(model_path, 'rb') as f:
         model = pickle.load(f)
     
     # Test data features
@@ -42,15 +42,16 @@ def get_f1_score(model_path, test_data_path):
 #################Function for model scoring
 def score_model():
     # Read test data
-    test_data =os.path.join(test_data_path, 'testdata.csv')
+    test_data = os.path.join(test_data_path, 'testdata.csv')
+    model_path = os.path.join(model_folder, 'trainedmodel.pkl')
 
     # Get F1 score
     f1 = get_f1_score(model_path, test_data)
 
     # Write F1 score to latestscore.txt
-    with open(os.path.join(model_path, 'latestscore.txt'), 'w') as f:
+    with open(os.path.join(model_folder, 'latestscore.txt'), 'w') as f:
         f.write(str(f1))
-    print(f"F1 score saved to file in {model_path}")
+    print(f"F1 score saved to file in {model_folder}")
 
 if __name__ == '__main__':
     score_model()
