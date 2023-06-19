@@ -18,11 +18,9 @@ dataset_csv_path = os.path.join(config['output_folder_path'])
 test_data_path = os.path.join(config['test_data_path'])
 model_path = os.path.join(config['output_model_path'])
 
-
-#################Function for model scoring
-def score_model():
+def get_f1_score(model_path, test_data_path):
     # Read test data
-    test_data = pd.read_csv(os.path.join(test_data_path, 'testdata.csv'))
+    test_data = pd.read_csv(test_data_path)
 
     # Load trained model
     with open(os.path.join(model_path, 'trainedmodel.pkl'), 'rb') as f:
@@ -39,6 +37,15 @@ def score_model():
     # Calc F1 score
     f1 = metrics.f1_score(y_test, y_pred)
     print(f"F1 Score: {f1}")
+    return f1
+
+#################Function for model scoring
+def score_model():
+    # Read test data
+    test_data =os.path.join(test_data_path, 'testdata.csv')
+
+    # Get F1 score
+    f1 = get_f1_score(model_path, test_data)
 
     # Write F1 score to latestscore.txt
     with open(os.path.join(model_path, 'latestscore.txt'), 'w') as f:
